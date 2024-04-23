@@ -1,0 +1,39 @@
+body {
+    background-color:cornflowerblue;
+}
+
+.title-text {
+    text-align: center;
+    font-size: 60px;
+}
+
+.body {
+    text-align: center;
+    font-size: 48px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+
+}
+
+.button {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+    height: 80px;
+    font-size: 24px;
+}
+
+.trash-icon {
+    width:400px;
+    height: 400px;
+
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+
+    margin-bottom: 40px;
+}
