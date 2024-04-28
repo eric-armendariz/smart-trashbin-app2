@@ -8,8 +8,8 @@ from gpiozero import AngularServo
 GPIO.setmode(GPIO.BCM)
  
 #set GPIO Pins
-GPIO_TRIGGER = 23 #25
-GPIO_ECHO =  24 #8
+GPIO_TRIGGER = 23 
+GPIO_ECHO =  24
 
 GPIO_TRIGGER_SENS2 = 25
 GPIO_ECHO_SENS2 = 8
@@ -93,7 +93,7 @@ def distance_bin_level():
     
 def openTrashLid():
     servo.angle = 90
-    time.sleep(2)
+    time.sleep(3)
     servo.angle = -40
     return
  
@@ -101,17 +101,21 @@ if __name__ == '__main__':
     servo = AngularServo(18, min_pulse_width=0.0006, max_pulse_width=0.0023, initial_angle=-40)
     servo.angle = -40
     GPIO.output(LED_OUT, False)
-    notification_sent = 0
-    init = False
+    notification_sent = False 
+    bin_full_counter = 0
     while True:
         dist = motion_sens_distance()
-        time.sleep(0.01)
+        #print(dist)
+        time.sleep(0.005)
         if dist <= 40:
             openTrashLid()
         
         bin_level_dist = distance_bin_level()
-        #print(bin_level_dist)
-        if bin_level_dist < 10 and not init:
+        # to avoid glitch, make sure bin low is detected at-leasr few times before sending a notification
+        if bin_level_dist < 10:
+          bin_full_counter = bin_full_counter + 1
+
+        if bin_full_counter >= 10:
             if not notification_sent:
                 print ("measured bin distance level", bin_level_dist)
                 #send a text notification
@@ -124,10 +128,12 @@ if __name__ == '__main__':
                 (output,err) = p.communicate()
                 notification_sent = True
             GPIO.output(LED_OUT, True)
-        else:
-            GPIO.output(LED_OUT, False)
-            notification_sent = False
+        
+        #When bin is emptied reset the LED and notification flag 
+        if bin_level_dist > 25: 
+          GPIO.output(LED_OUT, False)
+          notification_sent = False
+          bin_full_counter = 0
             
-        init = False
 
 
