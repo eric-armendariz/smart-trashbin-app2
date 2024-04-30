@@ -10,26 +10,26 @@ function client(){
         // 'connect' listener.
         console.log('connected to server!');
         // send the message
-        client.write(`${input}\r\n`);
+        client.write(`BIN_STATUS\r\n`);
     });
     
     // get the data from the server
     client.on('data', (data) => {
-        document.getElementById("greet_from_server").innerHTML = data;
-        console.log(data.toString());
+        const status = data.toString(); // Convert server response to string
+        document.getElementById("body-text").innerHTML = `Your trashcan is ${status}`;
+        console.log("Received:", status);
         client.end();
-        client.destroy();
     });
 
     client.on('end', () => {
         console.log('disconnected from server');
     });
 
-
+    client.on('error', (err) => {
+        console.error("Client error:", err);
+    });
 }
 
 function ping(){
-    // update the content in html
-    document.getElementById("body-text").innerHTML = "Your trashbin is XX% full!";
-    
+   client();
 }
